@@ -20,6 +20,14 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const database = client.db("chill-gamer");
+    app.post("/reviews", async (req, res) => {
+      const reviewData = req.body;
+      console.log(reviewData);
+      const result = await database.collection("reviews").insertOne(reviewData);
+      res.json(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
