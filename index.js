@@ -22,6 +22,12 @@ async function run() {
     await client.connect();
     const database = client.db("chill-gamer");
     const userCollection = client.db("chill-gamer").collection("users");
+
+    app.get("/reviews", async (req, res) => {
+      const reviews = await database.collection("reviews").find().toArray();
+      res.send(reviews);
+    });
+
     app.post("/reviews", async (req, res) => {
       const reviewData = req.body;
       console.log(reviewData);
@@ -30,6 +36,11 @@ async function run() {
     });
 
     //users
+    app.get("/users", async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
     app.post("/users", async (req, res) => {
       const userData = req.body;
       console.log(userData);
