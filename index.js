@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 require("dotenv").config();
 const cors = require("cors");
 const port = 3000;
-
+const ObjectId = require("mongodb").ObjectId;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.iltfq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,6 +36,14 @@ async function run() {
     app.get("/reviews", async (req, res) => {
       const reviews = await database.collection("reviews").find().toArray();
       res.send(reviews);
+    });
+
+    app.get("/reviewDetails/:id", async (req, res) => {
+      const id = req.params.id;
+      const review = await database
+        .collection("reviews")
+        .findOne({ _id: new ObjectId(id) });
+      res.send(review);
     });
 
     app.post("/reviews", async (req, res) => {
