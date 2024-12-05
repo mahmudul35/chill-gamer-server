@@ -23,6 +23,16 @@ async function run() {
     const database = client.db("chill-gamer");
     const userCollection = client.db("chill-gamer").collection("users");
 
+    app.get("/highestRated", async (req, res) => {
+      const highestRated = await database
+        .collection("reviews")
+        .find()
+        .sort({ rating: -1 })
+        .limit(6)
+        .toArray();
+      res.send(highestRated);
+    });
+
     app.get("/reviews", async (req, res) => {
       const reviews = await database.collection("reviews").find().toArray();
       res.send(reviews);
