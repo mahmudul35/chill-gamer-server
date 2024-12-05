@@ -21,11 +21,20 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const database = client.db("chill-gamer");
+    const userCollection = client.db("chill-gamer").collection("users");
     app.post("/reviews", async (req, res) => {
       const reviewData = req.body;
       console.log(reviewData);
       const result = await database.collection("reviews").insertOne(reviewData);
-      res.json(result);
+      res.send(result);
+    });
+
+    //users
+    app.post("/users", async (req, res) => {
+      const userData = req.body;
+      console.log(userData);
+      const result = await userCollection.insertOne(userData);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
