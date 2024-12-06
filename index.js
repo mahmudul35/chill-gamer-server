@@ -22,6 +22,9 @@ async function run() {
     await client.connect();
     const database = client.db("chill-gamer");
     const userCollection = client.db("chill-gamer").collection("users");
+    const watchListCollection = client
+      .db("chill-gamer")
+      .collection("watchList");
 
     app.get("/highestRated", async (req, res) => {
       const highestRated = await database
@@ -50,6 +53,14 @@ async function run() {
       const reviewData = req.body;
       console.log(reviewData);
       const result = await database.collection("reviews").insertOne(reviewData);
+      res.send(result);
+    });
+
+    app.post("/watchList", async (req, res) => {
+      const watchListData = req.body;
+      const { username, email } = watchListData;
+      console.log(username, email);
+      const result = await watchListCollection.insertOne(watchListData);
       res.send(result);
     });
 
