@@ -66,6 +66,19 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/reviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const { updatedReview, email } = req.body;
+      delete updatedReview._id;
+      const result = await database
+        .collection("reviews")
+        .updateOne(
+          { _id: new ObjectId(id), email: email },
+          { $set: updatedReview }
+        );
+      res.send(result);
+    });
+
     app.post("/watchList", async (req, res) => {
       const watchListData = req.body;
       const { username, email } = watchListData;
