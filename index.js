@@ -56,6 +56,16 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/reviews/:id", async (req, res) => {
+      console.log("body", req.body);
+      const { email } = req.body;
+      const id = req.params.id;
+      const result = await database
+        .collection("reviews")
+        .deleteOne({ _id: new ObjectId(id), email: email });
+      res.send(result);
+    });
+
     app.post("/watchList", async (req, res) => {
       const watchListData = req.body;
       const { username, email } = watchListData;
