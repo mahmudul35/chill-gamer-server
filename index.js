@@ -7,7 +7,6 @@ const port = 3000;
 const ObjectId = require("mongodb").ObjectId;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.iltfq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -18,7 +17,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const database = client.db("chill-gamer");
     const userCollection = client.db("chill-gamer").collection("users");
@@ -51,8 +49,11 @@ async function run() {
 
     app.post("/reviews", async (req, res) => {
       const reviewData = req.body;
+      const createdDate = new Date();
       console.log(reviewData);
-      const result = await database.collection("reviews").insertOne(reviewData);
+      const result = await database
+        .collection("reviews")
+        .insertOne({ ...reviewData, createdDate });
       res.send(result);
     });
 
@@ -79,10 +80,22 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/watchList", async (req, res) => {
+      const watchList = await watchListCollection.find().toArray();
+      res.send(watchList);
+    });
+
     app.post("/watchList", async (req, res) => {
       const watchListData = req.body;
-      const { username, email } = watchListData;
-      console.log(username, email);
+      const { email, gameId } = watchListData;
+      if (email && watchListData._id) {
+        const watchList = await watchListCollection.findOne({ email, gameId });
+        if (watchList) {
+          res.send({ message: "Already added to watchlist" });
+          return;
+        }
+      }
+
       const result = await watchListCollection.insertOne(watchListData);
       res.send(result);
     });
