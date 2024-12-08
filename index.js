@@ -17,7 +17,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
     const database = client.db("chill-gamer");
     const userCollection = client.db("chill-gamer").collection("users");
     const watchListCollection = client
@@ -50,7 +49,7 @@ async function run() {
     app.post("/reviews", async (req, res) => {
       const reviewData = req.body;
       const createdDate = new Date();
-      console.log(reviewData);
+
       const result = await database
         .collection("reviews")
         .insertOne({ ...reviewData, createdDate });
@@ -58,7 +57,6 @@ async function run() {
     });
 
     app.delete("/reviews/:id", async (req, res) => {
-      console.log("body", req.body);
       const { email } = req.body;
       const id = req.params.id;
       const result = await database
@@ -108,13 +106,13 @@ async function run() {
 
     app.post("/users", async (req, res) => {
       const userData = req.body;
-      console.log(userData);
+
       const result = await userCollection.insertOne(userData);
       res.send(result);
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
