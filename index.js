@@ -15,6 +15,11 @@ const client = new MongoClient(uri, {
   },
 });
 
+//middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 async function run() {
   try {
     const database = client.db("chill-gamer");
@@ -31,6 +36,19 @@ async function run() {
         .limit(6)
         .toArray();
       res.send(highestRated);
+    });
+
+    app.get("/topGamesOfTheWeek", async (req, res) => {
+      const lastWeek = new Date();
+      lastWeek.setDate(lastWeek.getDate() - 7);
+      const topGames = await database
+        .collection("reviews")
+        .find({ createdDate: { $gte: lastWeek } })
+        .sort({ rating: -1 })
+        .limit(7)
+        .toArray();
+
+      res.send(topGames);
     });
 
     app.get("/reviews", async (req, res) => {
@@ -122,11 +140,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-//middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
